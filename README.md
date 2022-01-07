@@ -1,2 +1,2 @@
 # Watchwinder
-Watchwinder for automatic watches with 3 slots
+Watchwinder for automatic watches with three slots
