@@ -1,29 +1,21 @@
-#include <Servo.h>
+#include "./settings.h"
+#include "./motor_control.h"
 
-#define servoPin 8
-
-Servo servo;
-
+ServoMotor m1(ServoNr1);
+ServoMotor m2(ServoNr2);
+ServoMotor m3(ServoNr3);
+ServoMotor m4(ServoNr4);
 
 void setup(){
-  servo.attach(servoPin);
+    m1.ServoMotorInit();
+    m2.ServoMotorInit();
+    m3.ServoMotorInit();
+    m4.ServoMotorInit();
 }
 
 void loop(){
-  servo.write(0);       //set angle to 0
-  
-  delay(3000);
-  
-  servo.write(90);      //set angle to 90
-
-  delay(3000);
-
-  servo.write(180);     //set angle to 180
-
-  delay(3000);
-
-  servo.write(20);      //set angle to 20
-
-  delay(3000);
-  
+    m1.ServoHome();
+    delay(5000);
+    m2.ServoSpin(3);
+    delay(1000);
 }
