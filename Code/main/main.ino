@@ -1,6 +1,9 @@
-#include "./settings.h"
 #include "./motor_control.h"
 
+//all user settings are imported from this file
+#include "./settings.h"
+
+//create servo motors
 ServoMotor m1(ServoNr1);
 ServoMotor m2(ServoNr2);
 ServoMotor m3(ServoNr3);
@@ -16,6 +19,6 @@ void setup(){
 void loop(){
     m1.ServoHome();
     delay(5000);
-    m2.ServoSpin(3);
+    m1.ServoSpin(3);
     delay(1000);
 }

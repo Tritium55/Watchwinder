@@ -8,9 +8,12 @@
 #define ServoNr3 4
 #define ServoNr4 5
 
+//define servo angle limits
+#define ServoLowLimit 10
+#define ServoHighLimit 170
 
 //define turn speed of servo
-
+#define ServoSpeed 10               //the lower, the faster
 
 
 //define clock pins

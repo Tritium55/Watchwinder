@@ -11,19 +11,43 @@ void ServoMotor::ServoMotorInit(void){
     servo.attach(pin);
 }
 
+
+void ServoMotor::slowWrite(int angle){
+    if(angle<ServoLowLimit) angle=ServoLowLimit;                    //set servo angle limits
+    if(angle>ServoHighLimit) angle=ServoHighLimit;
+
+    int curAngle = servo.read();                                    //reads current angle of servo
+
+    if(angle>=curAngle){
+        while(curAngle<angle){
+            servo.write(curAngle);
+            delay(ServoSpeed);
+            curAngle++;
+        }
+    }
+    else{
+        while(curAngle>angle){
+            servo.write(curAngle);
+            delay(ServoSpeed);
+            curAngle--;
+        }
+    }
+}
+
+
 void ServoMotor::ServoHome(void){
-    servo.write(90);
+    slowWrite(90);
     delay(6000);
 }
 
 void ServoMotor::ServoSpinOnce(void){
-    servo.write(0);
+    slowWrite(0);
     delay(3000);
-    servo.write(90);
+    slowWrite(90);
     delay(3000);
-    servo.write(180);
+    slowWrite(180);
     delay(3000);
-    servo.write(90);
+    slowWrite(90);
     delay(3000);
 }
 
