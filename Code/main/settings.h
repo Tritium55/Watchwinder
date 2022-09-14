@@ -13,7 +13,7 @@
 #define ServoHighLimit 170
 
 //define turn speed of servo
-#define ServoSpeed 10               //the lower, the faster
+#define ServoSpeed 25               //the lower, the faster
 
 
 //define clock pins
