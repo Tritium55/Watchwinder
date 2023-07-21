@@ -17,6 +17,7 @@ class Time_Handler{
         int Init();
         Time getTime();
         void setTime(Time curr);
+        bool lostPower();
 };
 
 #endif //time_handler_

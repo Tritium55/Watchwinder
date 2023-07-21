@@ -1,14 +1,13 @@
 #include "./motor_control.h"
-#include <Arduino.h>
+#include "./const_settings.h"
 
-#include "./settings.h"
-#include "motor_control.h"
+#include <Arduino.h>
 
 
 ServoMotor::ServoMotor(uint8_t _pin) : pin( _pin){
 }
 
-void ServoMotor::ServoMotorInit(void) { servo.attach(pin); }
+void ServoMotor::Init(void) { servo.attach(pin); }
 
 void ServoMotor::slowWrite(uint8_t angle){
     //set servo angle limits
@@ -38,12 +37,12 @@ void ServoMotor::slowWrite(uint8_t angle){
 }
 
 
-void ServoMotor::ServoHome(void){
+void ServoMotor::Home(void){
     slowWrite(90);
     delay(6000);
 }
 
-void ServoMotor::ServoSpinOnce(void){
+void ServoMotor::SpinOnce(void){
     slowWrite(0);
     delay(3000);
     slowWrite(90);
@@ -54,7 +53,7 @@ void ServoMotor::ServoSpinOnce(void){
     delay(3000);
 }
 
-void ServoMotor::ServoSpin(uint8_t turns){
+void ServoMotor::Spin(uint8_t turns){
     ServoHome();
     for(int i=0; i<turns; i++){
         ServoSpinOnce();

@@ -1,5 +1,4 @@
 // THESE SETTINGS WILL BE MODIFYABLE IN THE FIRMWARE AND CAN BE WRITTEN TO REWRITTEN TO EEPROM
-
 #ifndef factory_settings_
 #define factory_settings_
 

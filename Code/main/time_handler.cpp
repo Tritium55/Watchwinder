@@ -3,9 +3,6 @@
 #include <Arduino.h>
 
 Time_Handler::Time_Handler(){
-    if(rtc.lostPower()){
-        // TODO
-    }
 }
 
 int Time_Handler::Init(){
@@ -29,5 +26,9 @@ Time Time_Handler::getTime(){
 
 //TODO
 void Time_Handler::setTime(Time curr){
-    rtc.adjust(DateTime(F(__DATE__), ))
+    rtc.adjust(DateTime(F(__DATE__), curr.hour, curr.minute, curr.second));
+}
+
+bool Time_Handler::lostPower(){
+    return rtc.lostPower();
 }

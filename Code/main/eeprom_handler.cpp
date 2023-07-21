@@ -1,10 +1,9 @@
 #include "./eeprom_handler.h"
-#include "./settings.h"
+#include "./const_settings.h"
 #include "./factory_settings.h"
 
 #include <Arduino.h>
 #include <EEPROM.h>
-#include "eeprom_handler.h"
 
 #define struct EEPROM_DATA EEPROM_DATA;
 
