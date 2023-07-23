@@ -3,7 +3,18 @@
 
 #include "./const_settings.h"
 
-#include <Adafruit_ST7735.h>
+#include <TFT.h>
+
+enum TimeSelection{
+    first,
+    second,
+    third
+};
+
+typedef struct display_time{
+    Time time;
+    TimeSelection time_sel;
+}DisplayTime;
 
 enum DisplayMode{
     default,
@@ -14,10 +25,11 @@ enum DisplayMode{
 
 class Display_Handler{
     private:
-        Adafruit_ST7735 tft;
+        TFT tft;
     public:
         Display_Handler();
         int Init();
+        void handle_time_setting(DisplayTime dt);
         void handle(DisplayMode mode);
 
 }

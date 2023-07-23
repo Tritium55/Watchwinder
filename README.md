@@ -10,13 +10,29 @@ Watchwinder for mechanical watches with three slots
 
 
 ## Libraries
+// TODO
 The used libraries need to be downloaded from the Arduino IDE.
 They are as follows:
 - RTClib by Adafruit - for the realtime clock
-- Adafruit_ST7735 by Adafruit - for the display
 
 
 ## Connection Information
-- connect the the clock to the 3.3V line, GND, SDA to analog 4, and SCL analog 5
-- //TODO add connections for display
-- //TODO add connections for interface
+### Clock
+- 3.3V
+- GND
+- SDA to analog 4
+- SCL analog 5
+
+### Display
+- 5V
+- GND
+- MISO to pin 12
+- SCK to pin 13
+- MOSI to pin 11
+- LCD CS to pin 10
+- SD CS to pin 4
+- D/C to pin 9
+- BL to +5V
+
+### Interface
+- //TODO

@@ -1,5 +1,5 @@
-#ifndef settings_h
-#define settings_h
+#ifndef const_settings_h_
+#define const_settings_h_
 
 
 //define servo pins
@@ -21,8 +21,10 @@
 
 
 //define display pins
-// TODO
+#define DISPLAY_CS 10
+#define DISPLAY_DC 9
+#define DISPLAY_RESET 8
  
 
 
-#endif  //settings_h
+#endif  //const_settings_h_
