@@ -7,7 +7,7 @@
 #include <Fonts/FreeSansBold18pt7b.h>
 #include <SPI.h>
 
-#define FreeSansBold9pt7b std_font
+#define std_font &FreeSansBold9pt7b
 
 Display_Handler::Display_Handler(){
     // TODO
@@ -20,24 +20,88 @@ int Display_Handler::Init(){
     tft.background(0, 0, 0);
     tft.setCursor(14,22);
     tft.setFont(&FreeSansBold18pt7b);
-    tft.setTextColor(ST77XX_CYAN);
+    tft.stroke(CYAN);
     tft.println("Watch Winder");
-    tft.setFont(&std_font)
-    tft.setTextColor(ST77XX_WHITE);
+    tft.setFont(std_font)
+    tft.stroke(WHITE);
     tft.print("by Tritium");
-    delay(2000);
+    delay(4000);
 }
 
 void Display_Handler::handle_time_setting(DisplayTime dt){
+    // anti flickering because ATMEGA328 is slow
+    if(last_function_call != handle_time_setting){
+        tft.background(0, 0, 0);
+        last_function_call = handle_time_setting;
+    }
+
+    char [20];
+    snprintf(buffer, sizeof(buffer), "%02d:%02d:%02d", dt.time.hours, dt.time.minutes, dt.time.seconds);
+
+    //? maybe needed
+    tft.setTextSize(2);
+
+    switch(dt.time_highlight){
+        case hours:
+            //? idk if this works (found this in the ILI9488 src code)
+            tft.setTextColor(WHITE, CYAN);
+            tft.text(&buffer[0], 50, 50);
+            tft.setTextColor(WHITE, BLACK);
+            tft.text(&buffer[3], 50 + 2*6*2, 50);
+            tft.text(&buffer[6], 50 + 4*6*2, 50);
+            break;
+        
+        case minutes:
+            //? idk if this works (found this in the ILI9488 src code)
+            tft.setTextColor(WHITE, BLACK);
+            tft.text(&buffer[0], 50, 50);
+            tft.setTextColor(WHITE, CYAN);
+            tft.text(&buffer[3], 50 + 2*6*2, 50);
+            tft.setTextColor(WHITE, BLACK);
+            tft.text(&buffer[6], 50 + 4*6*2, 50);
+            break;
+        
+        case seconds:
+            //? idk if this works (found this in the ILI9488 src code)
+            tft.setTextColor(WHITE, BLACK);
+            tft.text(&buffer[0], 50, 50);
+            tft.text(&buffer[3], 50 + 2*6*2, 50);
+            tft.setTextColor(WHITE, CYAN);
+            tft.text(&buffer[6], 50 + 4*6*2, 50);
+            break;
+
+        default:
+            if(!Serial)
+                return;
+
+            //? maybe try could be used here
+            Serial.println("Error");
+            return;
+    }
 
 }
 
-void Display_Handler::handle(DisplayMode mode){
-    switch(mode){
-        case off:
-            //TODO
-            break;
+void Display_Handler::handle_rotation_setting(uint8_t n_rotations){
+    // anti flickering because ATMEGA328 is slow
+    if(last_function_call != handle_rotation_setting){
+        tft.background(0, 0, 0);
+        last_function_call = handle_rotation_setting;
+    }
 
+
+}
+
+void Display_Handler::handle_menu(MenuSelection sel){
+    // anti flickering because ATMEGA328 is slow
+    if(call_flag != handle_menu){
+        tft.background(0, 0, 0);
+        last_function_call = handle_menu;
+    }
+
+    // TODO
+
+
+    switch(sel){
         case set_time:
             //TODO
             break;
@@ -51,5 +115,4 @@ void Display_Handler::handle(DisplayMode mode){
             break;
     }
 
-    //? possibly add delay
 }

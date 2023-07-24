@@ -24,7 +24,10 @@
 #define DISPLAY_CS 10
 #define DISPLAY_DC 9
 #define DISPLAY_RESET 8
- 
 
+
+//define button pins
+#define CONFIRM_BUTTON 6
+#define INCREASE_BUTTON 5
 
 #endif  //const_settings_h_
