@@ -5,10 +5,11 @@
 
 #include <TFT.h>
 
-enum TimeSelection{
-    first,
-    second,
-    third
+enum Time_Highlighting{
+    none,
+    hours,
+    minutes,
+    seconds
 };
 
 typedef struct display_time{
