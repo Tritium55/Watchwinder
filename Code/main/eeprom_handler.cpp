@@ -13,7 +13,7 @@ EEPROM_Handler::EEPROM_Handler(){
         return;
     
     // set factory settings if necessary
-    Reset();
+    Reset();    // this loads the factory settings into onto the EEPROM on first startup
 }
 
 EEPROM_DATA EEPROM_Handler::Read(){
@@ -22,7 +22,8 @@ EEPROM_DATA EEPROM_Handler::Read(){
 
 void EEPROM_Handler::Write(EEPROM_DATA &data) {
     EEPROM.put(0, data);
-    EEPROM.put(sizeof(EEPROM_DATA), true); // set flag for custom settings
+    // set flag for custom settings - prevents overwriting custom settings on startup
+    EEPROM.put(sizeof(EEPROM_DATA), true);
 }
 
 void EEPROM_Handler::Reset(){
@@ -32,5 +33,6 @@ void EEPROM_Handler::Reset(){
     temp.rotation_time.minute = TIME_FOR_ROTATION_MINUTE;
     temp.rotation_time.second = TIME_FOR_ROTATION_SECOND;
     EEPROM.put(0, temp);
+    // unset custom settings flag
     EEPROM.put(sizeof(EEPROM_DATA), false);
 }

@@ -87,8 +87,11 @@ void Display_Handler::handle_rotation_setting(uint8_t n_rotations){
         tft.background(0, 0, 0);
         last_function_call = handle_rotation_setting;
     }
+    tft.setTextSize(2);
+    tft.setTextColor(WHITE, BLACK);
 
-
+    // TODO: coordinates will need to be changed
+    tft.text(String(n_rotations), 50, 50);
 }
 
 void Display_Handler::handle_menu(MenuSelection sel){

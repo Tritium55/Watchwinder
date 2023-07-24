@@ -21,43 +21,47 @@ Display_Handler display;
 
 void setup(){
     Serial.begin(9600);
-    // TODO: check pull_down resistor option
-    pinMode(CONFIRM_BUTTON, INPUT, PULL_DOWN);
-    pinMode(INCREASE_BUTTON, INPUT, PULL_DOWN);
+    pinMode(CONFIRM_BUTTON, INPUT_PULLUP);
+    pinMode(INCREASE_BUTTON, INPUT_PULLUP);
     m1.Init();
     m2.Init();
     m3.Init();
     clock.Init();
     display.Init();
 
-    // TODO set time
+    bool setClock = true;
+    setTime(setClock);
 }
 
 // checks if confirm button is pushed and waits for release
 bool confirmButtonPushed(){
-    bool state = digitalRead(CONFIRM_BUTTON);
+    // negate digigalRead() because PULL_UP resistor is used instead of PULL_DOWN
+    bool state = !digitalRead(CONFIRM_BUTTON);
     if(!state)
         return false;
     while(state){
-        state = digitalRead(CONFIRM_BUTTON);
+        state = !digitalRead(CONFIRM_BUTTON);
     }
     return true;
 }
 
 // checks if increase button is pushed and waits for release
 bool increaseButtonPushed(){
-    bool state = digitalRead(INCREASE_BUTTON);
+    // negate digigalRead() because PULL_UP resistor is used instead of PULL_DOWN
+    bool state = !digitalRead(INCREASE_BUTTON);
     if(!state)
         return false;
     while(state){
-        state = digitalRead(INCREASE_BUTTON);
+        state = !digitalRead(INCREASE_BUTTON);
     }
     return true;
 }
 
-void setTime(){
+// if the parameter is set to true, the RTC time will be set.
+// otherwise the time for when the rotations will occur will be set.
+void setTime(bool setClock){
     TimeHighlighting highlight = hours;
-    Time time = clock.getTime();
+    Time time = (setClock ? clock.getTime() : EEPROM.Read().rotation_time);
     while(true){
         DisplayTime dt;
         dt.time = time;
@@ -66,8 +70,16 @@ void setTime(){
         if(confirmButtonPushed()){
             if(highlight<seconds)
                 highlight++;
-            else
+            else{
+                if(setClock)
+                    clock.setTime(time);
+                else{
+                    EEPROM_DATA data = EEPROM.Read();
+                    data.rotation_time = time;
+                    EEPROM.Write(data);
+                }
                 return;
+            }
         }
         else if(increaseButtonPushed()){
             switch(highlight){
@@ -86,6 +98,23 @@ void setTime(){
                     time.seconds %= 60;
                     break;
             }
+        }
+    }
+}
+
+// manages all aspects of the rotation setting interaction
+void setRotations(){
+    EEPROM_DATA data = EEPROM.Read();
+    uint8_t rotations = data.rotation_amount;
+    while(true){
+        display.handle_rotation_setting(rotations);
+        if(confirmButtonPushed()){
+            data.rotation_amount = rotations;
+            EEPROM.Write(data);
+        }
+        else if(increaseButtonPushed()){
+            rotations++;
+            rotation %= 51;
         }
     }
 }
