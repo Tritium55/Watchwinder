@@ -34,11 +34,13 @@ typedef struct color{
 }Color;
  */
 
-// selected highlighting in he 
+// select highlighting in menu handler
 enum MenuSelection{
-    default,
+    none,
     set_time,
-    set_rotations
+    set_rotations,
+    reset_to_factory_settings,
+    dummy   // for first render on startup
 };
 
 class Display_Handler{
@@ -47,14 +49,17 @@ class Display_Handler{
         enum last_function_call{
             handle_menu,
             handle_time_setting,
-            handle_rotation_setting
+            handle_rotation_setting,
+            dummy   // for first render on startup
         };
-        last_function_call call_flag;
+        // dummy flags on startup so that the display doesn't blank
+        last_function_call function_call_flag = dummy;
+        MenuSelection menu_call_flag = dummy;
     public:
         Display_Handler();
         int Init();
-        void handle_time_setting(DisplayTime dt);    // this function is for setting the time at which the clock will 
-        void handle_rotation_setting(uint8_t n_rotations);
+        void handle_time_setting(DisplayTime dt);    // this function is for setting the time (RTC and time of rotation)
+        void handle_rotation_setting(uint16_t n_rotations);
         void handle_menu(MenuSelection sel);
 }
 

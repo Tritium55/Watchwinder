@@ -67,6 +67,7 @@ void setTime(bool setClock){
         dt.time = time;
         dt.time_highlight = highlight;
         display.handle_time_setting(dt);
+
         if(confirmButtonPushed()){
             if(highlight<seconds)
                 highlight++;
@@ -105,7 +106,7 @@ void setTime(bool setClock){
 // manages all aspects of the rotation setting interaction
 void setRotations(){
     EEPROM_DATA data = EEPROM.Read();
-    uint8_t rotations = data.rotation_amount;
+    uint16_t rotations = data.rotation_amount;
     while(true){
         display.handle_rotation_setting(rotations);
         if(confirmButtonPushed()){
@@ -114,14 +115,52 @@ void setRotations(){
         }
         else if(increaseButtonPushed()){
             rotations++;
-            rotation %= 51;
+            rotations %= (MAX_NUMBER_OF_ROTATIONS+1);
         }
     }
 }
 
+
+MenuSelection menu_status = none;
 void loop(){
+    /*
     m1.Home();
     delay(5000);
     m1.Spin(3);
     delay(1000);
+     */
+
+    display.handle_menu(menu_status);
+    switch(menu_status){
+        case none:
+            if(increaseButtonPushed())
+                menu_status = set_rotations;
+
+            break;
+        
+        case set_time:
+            if(increaseButtonPushed())
+                menu_status = set_rotations;
+
+            if(confirmButtonPushed()){
+                menu_status = none;
+                setTime(false);
+            }
+            break;
+
+        case set_rotations:
+            if(increaseButtonPushed())
+                menu_status = none;
+            
+            if(confirmButtonPushed()){
+                menu_status = none;
+                setRotations();
+            }
+            break;
+        
+        case reset_to_factory_settings:
+            //TODO
+            break;
+    }
+
 }

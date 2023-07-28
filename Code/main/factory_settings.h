@@ -8,6 +8,6 @@
 #define TIME_FOR_ROTATION_SECOND 0
 
 // factory set number of rotations
-#define NUMBER_OF_ROTATIONS 10
+#define NUMBER_OF_ROTATIONS 700
 
 #endif  //factory_settings_

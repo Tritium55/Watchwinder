@@ -81,7 +81,7 @@ void Display_Handler::handle_time_setting(DisplayTime dt){
 
 }
 
-void Display_Handler::handle_rotation_setting(uint8_t n_rotations){
+void Display_Handler::handle_rotation_setting(uint16_t n_rotations){
     // anti flickering because ATMEGA328 is slow
     if(last_function_call != handle_rotation_setting){
         tft.background(0, 0, 0);
@@ -95,16 +95,24 @@ void Display_Handler::handle_rotation_setting(uint8_t n_rotations){
 }
 
 void Display_Handler::handle_menu(MenuSelection sel){
+    bool was_menu = function_call_flag == handle_menu;
+
     // anti flickering because ATMEGA328 is slow
-    if(call_flag != handle_menu){
+    if(!was_menu){
         tft.background(0, 0, 0);
-        last_function_call = handle_menu;
+        function_call_flag = handle_menu;
     }
 
     // TODO
 
+    // avoid unnecessary rendering
+    if(was_menu && menu_call_flag==sel)
+        return;
 
     switch(sel){
+        case none:
+            //TODO
+            break;
         case set_time:
             //TODO
             break;
@@ -114,7 +122,7 @@ void Display_Handler::handle_menu(MenuSelection sel){
             break;
 
         default:
-            //TODO
+            return;
             break;
     }
 

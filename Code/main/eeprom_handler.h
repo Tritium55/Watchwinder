@@ -6,7 +6,7 @@
 
 typedef struct EEPROM_DATA_{
     Time rotation_time;
-    uint8_t rotation_amount;
+    uint16_t rotation_amount;
 }EEPROM_DATA;
 
 class EEPROM_Handler{

@@ -30,4 +30,7 @@
 #define CONFIRM_BUTTON 6
 #define INCREASE_BUTTON 5
 
+//define rotation settings
+#define MAX_NUMBER_OF_ROTATIONS 1000
+
 #endif  //const_settings_h_
