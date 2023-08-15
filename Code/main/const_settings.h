@@ -32,5 +32,6 @@
 
 //define rotation settings
 #define MAX_NUMBER_OF_ROTATIONS 1000
+#define AMOUNT_PER_INCREASE_BUTTON_PUSHED 25
 
 #endif  //const_settings_h_

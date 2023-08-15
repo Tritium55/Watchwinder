@@ -1,6 +1,7 @@
 #include "./motor_control.h"
 #include "./eeprom_handler.h"
 #include "./display_handler.h"
+#include "./time_handler.h"
 
 //all user settings are imported from this file
 #include "./const_settings.h"
@@ -114,7 +115,7 @@ void setRotations(){
             EEPROM.Write(data);
         }
         else if(increaseButtonPushed()){
-            rotations++;
+            rotations += AMOUNT_PER_INCREASE_BUTTON_PUSHED;
             rotations %= (MAX_NUMBER_OF_ROTATIONS+1);
         }
     }
@@ -134,7 +135,7 @@ void loop(){
     switch(menu_status){
         case none:
             if(increaseButtonPushed())
-                menu_status = set_rotations;
+                menu_status = set_time;
 
             break;
         
@@ -150,7 +151,7 @@ void loop(){
 
         case set_rotations:
             if(increaseButtonPushed())
-                menu_status = none;
+                menu_status = reset_to_factory_settings;
             
             if(confirmButtonPushed()){
                 menu_status = none;
@@ -159,7 +160,13 @@ void loop(){
             break;
         
         case reset_to_factory_settings:
-            //TODO
+            if(increaseButtonPushed())
+                menu_status = none;
+            
+            if(confirmButtonPushed()){
+                menu_status = none;
+                EEPROM.Reset();
+            }
             break;
     }
 

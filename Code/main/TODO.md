@@ -1,6 +1,10 @@
 # TODO
 
 1. Display UI
+    - Menu UI
+    - set rotations UI (WITH HEADLINE)
+    - set rtc time UI (WITH HEADLINE)
+    - set turning time UI (WITH HEADLINE)
 2. Servo control lib: DONE
 3. Control -> think about button setup, switch setup, ...
 4. Factory settings to EEPROM, restore factory settings option: DONE
