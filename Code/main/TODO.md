@@ -10,5 +10,4 @@
 4. Factory settings to EEPROM, restore factory settings option: DONE
 5. Write settings to EEPROM: DONE
 6. Clock controlled turning
-7. Display brightness control (probably potentiometer)
-8. Low Power Implementation
+7. Low Power Implementation

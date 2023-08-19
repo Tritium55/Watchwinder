@@ -6,6 +6,9 @@
 //all user settings are imported from this file
 #include "./const_settings.h"
 
+// default library for watchdog, deepsleep and power saving management
+#include <ArduinoLowPower.h>
+
 //create servo motors
 ServoMotor m1(SERVO_PIN_1);
 ServoMotor m2(SERVO_PIN_2);
@@ -18,20 +21,42 @@ EEPROM_Handler EEPROM;
 Time_Handler clock;
 
 //manage display
-Display_Handler display;
+Display_Handler display = Display_Handler(DISPLAY_CS, DISPLAY_DC, DISPLAY_RESET);
 
 void setup(){
     Serial.begin(9600);
     pinMode(CONFIRM_BUTTON, INPUT_PULLUP);
     pinMode(INCREASE_BUTTON, INPUT_PULLUP);
+    pinMode(REALTIME_CLK_SQW, INPUT_PULLUP);
     m1.Init();
     m2.Init();
     m3.Init();
     clock.Init();
     display.Init();
+    
+    LowPower.attachInterruptWakeup(REALTIME_CLK_SQW, wakeup, CHANGE);
+    LowPower.attachInterruptWakeup(CONFIRM_BUTTON, wakeup, CHANGE);
+
+    clock.setAlarm(EEPROM.Read().rotation_time);
 
     bool setClock = true;
     setTime(setClock);
+}
+
+void sleep(){
+    // power off display (probably via digital pin and transistor/ mosfet)
+    m1.disable();
+    m2.disable();
+    m3.disable();
+    LowPower.deepSleep();
+}
+
+void wakeup(){
+    // power on display (probably via digital pin and transistor/ mosfet)
+    m1.enable();
+    m2.enable();
+    m3.enable();
+    last_action = millis();
 }
 
 // checks if confirm button is pushed and waits for release
@@ -70,6 +95,7 @@ void setTime(bool setClock){
         display.handle_time_setting(dt);
 
         if(confirmButtonPushed()){
+            //? this comparison might not be legal
             if(highlight<seconds)
                 highlight++;
             else{
@@ -79,6 +105,7 @@ void setTime(bool setClock){
                     EEPROM_DATA data = EEPROM.Read();
                     data.rotation_time = time;
                     EEPROM.Write(data);
+                    clock.setAlarm(time);
                 }
                 return;
             }
@@ -122,7 +149,12 @@ void setRotations(){
 }
 
 
+// declared volatile since its' value can change inside an interrupt
+volatile unsigned long last_action = millis(); 
+volatile bool turn_motor_flag = false;
+
 MenuSelection menu_status = none;
+
 void loop(){
     /*
     m1.Home();
@@ -131,14 +163,21 @@ void loop(){
     delay(1000);
      */
 
+
+    // updates the timestamp of the last user input
+    if(!digitalRead(INCREASE_BUTTON) || !digitalRead(CONFIRM_BUTTON) || last_action>millis())
+        last_action = millis();
+
     display.handle_menu(menu_status);
     switch(menu_status){
+        // no button selected
         case none:
             if(increaseButtonPushed())
                 menu_status = set_time;
 
             break;
         
+        // set turn time menu button currently selected
         case set_time:
             if(increaseButtonPushed())
                 menu_status = set_rotations;
@@ -149,6 +188,7 @@ void loop(){
             }
             break;
 
+        // set rotations menu button currently selected
         case set_rotations:
             if(increaseButtonPushed())
                 menu_status = reset_to_factory_settings;
@@ -159,6 +199,7 @@ void loop(){
             }
             break;
         
+        // reset button currently selected
         case reset_to_factory_settings:
             if(increaseButtonPushed())
                 menu_status = none;
@@ -166,8 +207,28 @@ void loop(){
             if(confirmButtonPushed()){
                 menu_status = none;
                 EEPROM.Reset();
+                clock.setAlarm(EEPROM.Read().rotation_time);
             }
+            break;
+
+        // just in case some bs happens
+        default:
+            menu_status = none;
             break;
     }
 
+    // put arduino to sleep if more than five minutes have passed since last user input
+    if(menu_status+300000 < millis())
+        sleep();
+
+    if(turn_motor_flag){
+        m1.Home();
+        m2.Home();
+        m3.Home();
+        uint16_t rotations = EEPROM.Read().rotation_amount;
+        m1.Spin(rotations);
+        m2.Spin(rotations);
+        m3.Spin(rotations);
+        turn_motor_flag = false;
+    }
 }

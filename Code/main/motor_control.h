@@ -14,7 +14,9 @@ class ServoMotor{
         ServoMotor(uint8_t _pin);
         void Init(void);        //must be used in the setup function
         void Home(void);             //sets servo position to 90 degrees
-        void Spin(uint8_t turns);        //spins the servo by the number of turns
+        void Spin(uint16_t turns);        //spins the servo by the number of turns
+        void disable(void);     //detaches the servo for power efficiency
+        void enable(void);      //reattaches the servo
 };
 
 

@@ -3,9 +3,9 @@
 
 
 //define servo pins
-#define SERVO_PIN_1 2
-#define SERVO_PIN_2 3
-#define SERVO_PIN_3 4
+#define SERVO_PIN_1 5
+#define SERVO_PIN_2 6
+#define SERVO_PIN_3 7
 
 //define servo angle limits
 #define SERVO_LOW_LIMIT 10
@@ -18,6 +18,7 @@
 //define DS3231 realtime clock pins
 #define REALTIME_CLK_SDA A4
 #define REALTIME_CLK_SCL A5
+#define REALTIME_CLK_SQW 2
 
 
 //define display pins
@@ -27,8 +28,8 @@
 
 
 //define button pins
-#define CONFIRM_BUTTON 6
-#define INCREASE_BUTTON 5
+#define CONFIRM_BUTTON 3
+#define INCREASE_BUTTON 4
 
 //define rotation settings
 #define MAX_NUMBER_OF_ROTATIONS 1000

@@ -7,11 +7,11 @@
 #include <Fonts/FreeSansBold18pt7b.h>
 #include <SPI.h>
 
-#define std_font &FreeSansBold9pt7b
+#define std_font FreeSansBold9pt7b
 
-Display_Handler::Display_Handler(){
+Display_Handler::Display_Handler(uint8_t CS, uint8_t DC, uint8_t RESET){
     // TODO
-    tft = TFT(DISPLAY_CS, DISPLAY_DC, DISPLAY_RESET);
+    tft = TFT(CS, DC, RESTET);
 }
 
 int Display_Handler::Init(){
@@ -19,7 +19,7 @@ int Display_Handler::Init(){
     tft.begin();
     tft.background(0, 0, 0);
     tft.setCursor(14,22);
-    tft.setFont(&FreeSansBold18pt7b);
+    tft.setFont(FreeSansBold18pt7b);
     tft.stroke(CYAN);
     tft.println("Watch Winder");
     tft.setFont(std_font)
@@ -44,29 +44,29 @@ void Display_Handler::handle_time_setting(DisplayTime dt){
     switch(dt.time_highlight){
         case hours:
             //? idk if this works (found this in the ILI9488 src code)
-            tft.setTextColor(WHITE, CYAN);
+            tft.setTextColor(ST7735_WHITE, ST7735_CYAN);
             tft.text(&buffer[0], 50, 50);
-            tft.setTextColor(WHITE, BLACK);
+            tft.setTextColor(ST7735_WHITE, ST7735_BLACK);
             tft.text(&buffer[3], 50 + 2*6*2, 50);
             tft.text(&buffer[6], 50 + 4*6*2, 50);
             break;
         
         case minutes:
             //? idk if this works (found this in the ILI9488 src code)
-            tft.setTextColor(WHITE, BLACK);
+            tft.setTextColor(ST7735_WHITE, ST7735_BLACK);
             tft.text(&buffer[0], 50, 50);
-            tft.setTextColor(WHITE, CYAN);
+            tft.setTextColor(ST7735_WHITE, ST7735_CYAN);
             tft.text(&buffer[3], 50 + 2*6*2, 50);
-            tft.setTextColor(WHITE, BLACK);
+            tft.setTextColor(ST7735_WHITE, ST7735_BLACK);
             tft.text(&buffer[6], 50 + 4*6*2, 50);
             break;
         
         case seconds:
             //? idk if this works (found this in the ILI9488 src code)
-            tft.setTextColor(WHITE, BLACK);
+            tft.setTextColor(ST7735_WHITE, ST7735_BLACK);
             tft.text(&buffer[0], 50, 50);
             tft.text(&buffer[3], 50 + 2*6*2, 50);
-            tft.setTextColor(WHITE, CYAN);
+            tft.setTextColor(ST7735_WHITE, ST7735_CYAN);
             tft.text(&buffer[6], 50 + 4*6*2, 50);
             break;
 
@@ -94,36 +94,68 @@ void Display_Handler::handle_rotation_setting(uint16_t n_rotations){
     tft.text(String(n_rotations), 50, 50);
 }
 
+String menuSelectionToString(MenuSelection sel){
+    String result;
+    switch(sel){
+        case set_time:
+            result = "Set Time";
+            break;
+
+        case set_rotations:
+            result = "Rotations";
+            break;
+        
+        case reset_to_factory_settings:
+            result = "Reset";
+            break;
+        
+        default:
+            result = NULL;
+            break;
+    }
+    return result;
+}
+
 void Display_Handler::handle_menu(MenuSelection sel){
-    bool was_menu = function_call_flag == handle_menu;
+    bool was_menu = (function_call_flag == handle_menu);
 
     // anti flickering because ATMEGA328 is slow
     if(!was_menu){
-        tft.background(0, 0, 0);
         function_call_flag = handle_menu;
+        tft.fillScreen(ST7735_BLACK);
     }
 
-    // TODO
-
     // avoid unnecessary rendering
-    if(was_menu && menu_call_flag==sel)
+    if(was_menu && (menu_call_flag==sel))
         return;
 
-    switch(sel){
-        case none:
-            //TODO
-            break;
-        case set_time:
-            //TODO
-            break;
-        
-        case set_rotations:
-            //TODO
-            break;
+    tft.setTextSize(2);
+    tft.stroke(255, 255, 255);
 
-        default:
-            return;
-            break;
+    // display all options as buttons
+    int buttonWidth = 100;
+    int buttonHeight = 30;
+    int buttonGap = 5;
+    int numberOfButtons = 3;
+    int startX = (tft.width() - numberOfButtons * buttonWidth + (numberOfButtons-1) * buttonGap)) / 2;
+    int startY = tft.height() - buttonHeight - 10;
+
+    //? might need to declare enum MenuSelection as enum class MenuSelection because of int comparability restrictions
+    for(int i=0; i<numberOfButtons; i++){
+        int buttonX = startX + (buttonWidth + buttonGap) * i;
+        int buttonY = startY;
+
+        tft.stroke(255, 255, 255);
+        if(sel == i){
+            tft.fillRoundRect(buttonX, buttonY, buttonWidth, buttonHeight, 5, TFT_YELLOW);
+            tft.stroke(0, 0, 0); // Set text color to black for the highlighted option
+        }
+        else{
+            tft.fillRoundRect(buttonX, buttonY, buttonWidth, buttonHeight, 5, TFT_BLUE);
+        }
+
+        //? Todo: might need to adjust cords for centered button text/labels
+        tft.text(menuSelectionToString(sel), buttonX + 10, buttonY + 8);
     }
 
 }

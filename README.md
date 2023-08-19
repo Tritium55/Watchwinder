@@ -22,6 +22,7 @@ They are as follows:
 - GND
 - SDA to analog 4
 - SCL analog 5
+- SQW/INT to pin 2
 
 ### Display
 - 5V
