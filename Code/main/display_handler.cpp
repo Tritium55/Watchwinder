@@ -3,6 +3,7 @@
 #include "./time_handler.h"
 
 #include <Arduino.h>
+#include <Adafruit_GFX.h>
 #include <Fonts/FreeSansBold9pt7b.h>
 #include <Fonts/FreeSansBold18pt7b.h>
 #include <SPI.h>
