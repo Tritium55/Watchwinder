@@ -161,14 +161,6 @@ volatile bool turn_motor_flag = false;
 MenuSelection menu_status = none;
 
 void loop(){
-    /*
-    m1.Home();
-    delay(5000);
-    m1.Spin(3);
-    delay(1000);
-     */
-
-
     // updates the timestamp of the last user input
     if(!digitalRead(INCREASE_BUTTON) || !digitalRead(CONFIRM_BUTTON) || last_action>millis())
         last_action = millis();
