@@ -34,7 +34,7 @@ void setup(){
     clock.Init();
     display.Init();
     
-    LowPower.attachInterruptWakeup(REALTIME_CLK_SQW, wakeup, CHANGE);
+    LowPower.attachInterruptWakeup(REALTIME_CLK_SQW, wakeup_with_turn, CHANGE);
     LowPower.attachInterruptWakeup(CONFIRM_BUTTON, wakeup, CHANGE);
 
     clock.setAlarm(EEPROM.Read().rotation_time);
@@ -49,6 +49,11 @@ void sleep(){
     m2.disable();
     m3.disable();
     LowPower.deepSleep();
+}
+
+void wakeup_with_turn(){
+    turn_motor_flag = true;
+    wakeup();
 }
 
 void wakeup(){
@@ -222,13 +227,8 @@ void loop(){
         sleep();
 
     if(turn_motor_flag){
-        m1.Home();
-        m2.Home();
-        m3.Home();
         uint16_t rotations = EEPROM.Read().rotation_amount;
-        m1.Spin(rotations);
-        m2.Spin(rotations);
-        m3.Spin(rotations);
+        ServoMotor::SpinMultiple(m1, m2, m3, rotations);
         turn_motor_flag = false;
     }
 }

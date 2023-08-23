@@ -12,7 +12,7 @@
 #define SERVO_HIGH_LIMIT 170
 
 //define turn speed of servo
-#define SERVO_SPEED 25               //the lower, the faster
+#define SERVO_SPEED 15               //the lower, the faster
 
 
 //define DS3231 realtime clock pins

@@ -12,6 +12,7 @@ void ServoMotor::Init(void) {
     this->Home();
 }
 
+//? BULLSHIT
 void ServoMotor::slowWrite(uint8_t angle){
     //set servo angle limits
     if(angle < SERVO_LOW_LIMIT)
@@ -63,6 +64,39 @@ void ServoMotor::Spin(uint16_t turns){
         ServoSpinOnce();
         delay(300);
     }
+}
+
+// helper function
+void spin_multiple_helper(const ServoMotor &m1, const ServoMotor &m2, const ServoMotor &m3, int deg){
+    m1->servo.write(deg);
+    m2->servo.write(deg);
+    m3->servo.write(deg);
+    delay(SERVO_SPEED);
+}
+
+static void ServoMotor::SpinMultiple(const ServoMotor &m1, const ServoMotor &m2, const ServoMotor &m3, uint16_t turns){
+    m1->Home();
+    m2->Home();
+    m3->Home();
+
+    for(int deg=90; deg>SERVO_LOW_LIMIT; deg--){
+        spin_multiple_helper(m1, m2, m3, deg);
+    }
+
+    for(int turn=0; turn<turns; turn++){
+        // spin to max
+        for(int deg=SERVO_LOW_LIMIT; deg<SERVO_HIGH_LIMIT; deg++){
+            spin_multiple_helper(m1, m2, m3, deg);
+        }
+        // spin to min
+        for(int deg=SERVO_HIGH_LIMIT; deg>SERVO_LOW_LIMIT; deg--){
+            spin_multiple_helper(m1, m2, m3, deg);
+        }
+    }
+
+    m1->Home();
+    m2->Home();
+    m3->Home();
 }
 
 void ServoMotor::disable(void){
