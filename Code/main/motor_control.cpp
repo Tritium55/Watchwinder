@@ -12,6 +12,7 @@ void ServoMotor::Init(void) {
     this->Home();
 }
 
+// TODO
 //? BULLSHIT
 void ServoMotor::slowWrite(uint8_t angle){
     //set servo angle limits
@@ -46,7 +47,7 @@ void ServoMotor::Home(void){
     delay(2000);
 }
 
-// TODO: VERY IMPORTANT TO OPTIMIZE
+// TODO: VERY IMPORTANT TO OPTIMIZE (unless SpinMultiple works)
 void ServoMotor::SpinOnce(void){
     slowWrite(0);
     delay(3000);
