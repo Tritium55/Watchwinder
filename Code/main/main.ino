@@ -1,4 +1,4 @@
-#include "./motor_control.h"
+ #include "./motor_control.h"
 #include "./eeprom_handler.h"
 #include "./display_handler.h"
 #include "./time_handler.h"
@@ -7,7 +7,8 @@
 #include "./const_settings.h"
 
 // default library for watchdog, deepsleep and power saving management
-#include <ArduinoLowPower.h>
+// #include <ArduinoLowPower.h>     //comment out if using avr boards
+#include <LowPower.h>          //use library if using avr boards
 
 //create servo motors
 ServoMotor m1(SERVO_PIN_1);

@@ -12,7 +12,7 @@
 
 Display_Handler::Display_Handler(uint8_t CS, uint8_t DC, uint8_t RESET){
     // TODO
-    tft = TFT(CS, DC, RESTET);
+    tft = TFT(CS, DC, RESET);
 }
 
 int Display_Handler::Init(){
@@ -118,7 +118,8 @@ String menuSelectionToString(MenuSelection sel){
 }
 
 void Display_Handler::handle_menu(MenuSelection sel){
-    bool was_menu = (function_call_flag == handle_menu);
+    // TODO
+    bool was_menu = (bool) function_call_flag == handle_menu;
 
     // anti flickering because ATMEGA328 is slow
     if(!was_menu){

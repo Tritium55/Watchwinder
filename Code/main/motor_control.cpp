@@ -35,7 +35,7 @@ void ServoMotor::slowWrite(uint8_t angle){
         while(currAngle > angle){
             servo.write(currAngle);
             delay(SERVO_SPEED);
-            curAngle--;
+            currAngle--;
         }
     }
 }
@@ -59,9 +59,9 @@ void ServoMotor::SpinOnce(void){
 }
 
 void ServoMotor::Spin(uint16_t turns){
-    ServoHome();
+    this->Home();
     for(int i=0; i<turns; i++){
-        ServoSpinOnce();
+        this->SpinOnce();
         delay(300);
     }
 }
