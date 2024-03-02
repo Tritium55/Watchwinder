@@ -30,14 +30,13 @@ Time Time_Handler::getTime(){
     return result;
 }
 
-//TODO
 void Time_Handler::setTime(Time curr){
-    rtc.adjust(DateTime(F(__DATE__), curr.hours, curr.minutes, curr.seconds));
+    rtc.adjust(DateTime(2024, 1, 1, curr.hours, curr.minutes, curr.seconds));
 }
 
-void Time_Handler::setAlarm(Time curr){
+void Time_Handler::setAlarm(Time alarm){
     rtc.clearAlarm(1);
-    rtc.setAlarm1(DateTime(2023, 8, 19, curr.hours, curr.minutes, curr.seconds), DS3231_A1_Hour);
+    rtc.setAlarm1(DateTime(2024, 1, 1, alarm.hours, alarm.minutes, alarm.seconds), DS3231_A1_Hour);
 }
 
 // probably not needed for this project
