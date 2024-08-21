@@ -1,6 +1,6 @@
 # Watchwinder
 Watchwinder for mechanical watches with three slots
-
+// TODO
 
 ## Parts
 1. Arduino Uno
@@ -11,8 +11,7 @@ Watchwinder for mechanical watches with three slots
 
 ## Libraries
 // TODO
-The used libraries need to be downloaded from the Arduino IDE.
-They are as follows:
+The following libraries need to be downloaded. This can be done within the Arduino IDE:
 - RTClib by Adafruit - for the realtime clock
 
 

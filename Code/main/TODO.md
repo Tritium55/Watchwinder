@@ -1,6 +1,7 @@
 # TODO
 
 ## CODE
+- rename all functions for consistant naming scheme
 - Display UI (kill me)
     - Menu UI
     - set rotations UI (WITH HEADLINE)
@@ -19,4 +20,4 @@
 ## 3D Design
 
 
-## PCB Design?
+## PCB Design

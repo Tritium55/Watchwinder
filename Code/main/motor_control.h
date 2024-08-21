@@ -3,6 +3,7 @@
 
 #include <Servo.h>
 
+// TODO: rename
 class ServoMotor{
     private:
         Servo servo;
