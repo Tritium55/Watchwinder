@@ -10,7 +10,7 @@ The watch winder itself is able to wind 3 watches. The amount of turns per day, 
 3. 3 Servos                     //TODO add name of servo/ serial number
 4. 1.77 inch SPI TFT Display 128x160 pixel
 5. 3 MOSFETs                    //TODO add some info
-6. All printed parts needed     //TODO add link to printing section
+6. All [printed parts](3D-Printed-Parts) needed
 7. M2 threaded inserts and M2 screws
 
 ## 3D-Printing
@@ -47,8 +47,12 @@ I recommend using a soldering iron set to 250-300°C and some gentle pressure.
 ## Libraries
 // TODO
 The following libraries need to be downloaded. This can be done within the Arduino IDE:
-- RTClib by Adafruit - for the realtime clock
-- TFT.h                         //TODO add some info
+- Adafruit RTC Library
+- TFT
+- Adafruit GFX Library
+- Adafruit ST7735 Library
+- SPI (arduino avr core)
+
 
 ## Loading the Firmware
 The build process is as follows:
@@ -58,6 +62,6 @@ After that, connect the Arduino to your PC, install the necessary [drivers](http
 Now open the [main.ino](Code/main/main.ino) and click upload in the top left corner.
 You have now completed the Firmware step.
 
-Note: You will need to download the whole [main folder](Code/main) and either open the folder itself or open the [main.ino](Code/main/main.ino) from within the folder.
+Note: You will need to download the [main folder](Code/main) and either open the folder itself or open the [main.ino](Code/main/main.ino) from within the folder.
 
 
