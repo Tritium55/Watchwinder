@@ -1,7 +1,6 @@
 # TODO
 
 ## CODE
-- rename all functions for consistant naming scheme
 - Display UI (kill me)
     - Menu UI
     - set rotations UI (WITH HEADLINE)
@@ -10,10 +9,12 @@
 
 - Servo control lib: disable and enable functions
 - Servo control lib: SpinMultiple testing and optimization
-- time handler: fix setTime function: DONE
-- Low Power Implementation: ALMOST DONE (MOSFET STUFF STILL NEEDS TO BE ADDED)
+- time handler: fix setTime function
+- Low Power Implementation (AND MOSFET STUFF STILL NEEDS TO BE ADDED)
 - fix main
 - main: control interface
+- main: ensure that the motors only rotate, when the interface is not being used
+- main: ensure that the watchwinder does not enter standby while the motors are rotating
 
 
 

@@ -1,6 +1,4 @@
 #include "./display_handler.h"
-#include "./const_settings.h"
-#include "./time_handler.h"
 
 #include <Arduino.h>
 #include <Adafruit_GFX.h>
@@ -10,12 +8,12 @@
 
 #define std_font FreeSansBold9pt7b
 
-Display_Handler::Display_Handler(uint8_t CS, uint8_t DC, uint8_t RESET){
+display_handler::display_handler(uint8_t CS, uint8_t DC, uint8_t RESET){
     // TODO
     tft = TFT(CS, DC, RESET);
 }
 
-int Display_Handler::Init(){
+int display_handler::init(){
     // TODO
     tft.begin();
     tft.background(0, 0, 0);
@@ -29,14 +27,14 @@ int Display_Handler::Init(){
     delay(4000);
 }
 
-void Display_Handler::handle_time_setting(DisplayTime dt){
+void display_handler::set_time_menu(display_time dt){
     // anti flickering because ATMEGA328 is slow
     if(last_function_call != handle_time_setting){
         tft.background(0, 0, 0);
         last_function_call = handle_time_setting;
     }
 
-    char [20];
+    char buffer[20];
     snprintf(buffer, sizeof(buffer), "%02d:%02d:%02d", dt.time.hours, dt.time.minutes, dt.time.seconds);
 
     //? maybe needed
@@ -82,7 +80,7 @@ void Display_Handler::handle_time_setting(DisplayTime dt){
 
 }
 
-void Display_Handler::handle_rotation_setting(uint16_t n_rotations){
+void display_handler::set_rotations_menu(uint16_t n_rotations){
     // anti flickering because ATMEGA328 is slow
     if(last_function_call != handle_rotation_setting){
         tft.background(0, 0, 0);
@@ -95,7 +93,7 @@ void Display_Handler::handle_rotation_setting(uint16_t n_rotations){
     tft.text(String(n_rotations), 50, 50);
 }
 
-String menuSelectionToString(MenuSelection sel){
+String menu_selection_to_string(menu_selection sel){
     String result;
     switch(sel){
         case set_time:
@@ -117,11 +115,11 @@ String menuSelectionToString(MenuSelection sel){
     return result;
 }
 
-void Display_Handler::handle_menu(MenuSelection sel){
+void display_handler::main_menu(menu_selection sel){
     // TODO
     bool was_menu = (bool) function_call_flag == handle_menu;
 
-    // anti flickering because ATMEGA328 is slow
+    // anti flickering (ATMEGA328 is slow)
     if(!was_menu){
         function_call_flag = handle_menu;
         tft.fillScreen(ST7735_BLACK);
@@ -142,7 +140,7 @@ void Display_Handler::handle_menu(MenuSelection sel){
     int startX = (tft.width() - numberOfButtons * buttonWidth + (numberOfButtons-1) * buttonGap)) / 2;
     int startY = tft.height() - buttonHeight - 10;
 
-    //? might need to declare enum MenuSelection as enum class MenuSelection because of int comparability restrictions
+    //? might need to declare enum menu_selection as enum class menu_selection because of int comparability restrictions
     for(int i=0; i<numberOfButtons; i++){
         int buttonX = startX + (buttonWidth + buttonGap) * i;
         int buttonY = startY;
@@ -157,7 +155,7 @@ void Display_Handler::handle_menu(MenuSelection sel){
         }
 
         //? Todo: might need to adjust cords for centered button text/labels
-        tft.text(menuSelectionToString(sel), buttonX + 10, buttonY + 8);
+        tft.text(menu_selection_to_string(sel), buttonX + 10, buttonY + 8);
     }
 
 }

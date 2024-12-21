@@ -47,10 +47,11 @@ I recommend using a soldering iron set to 250-300°C and some gentle pressure.
 ## Libraries
 // TODO
 The following libraries need to be downloaded. This can be done within the Arduino IDE:
-- Adafruit RTC Library
 - TFT
+- Adafruit RTC Library
 - Adafruit GFX Library
 - Adafruit ST7735 Library
+- Low-Power (by Rocket Scream Electronics)
 - SPI (arduino avr core)
 
 

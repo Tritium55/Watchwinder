@@ -13,7 +13,7 @@ void setup(){
     tft.fillScreen(ST77XX_BLACK);
     delay(3000);
 
-    show_page();cd 
+    show_page();
 }
 
 void loop(){

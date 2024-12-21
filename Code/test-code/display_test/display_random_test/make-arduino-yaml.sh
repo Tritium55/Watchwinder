@@ -8,4 +8,4 @@
 # arduino-cli board list
 
 # generate the yaml file
-arduino-cli board attach -p /dev/ttyACM0 -b arduino:avr:uno display_example_code.ino
+arduino-cli board attach -p /dev/ttyACM0 -b arduino:avr:uno display_random_test.ino

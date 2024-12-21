@@ -1,13 +1,16 @@
 #include "./time_handler.h"
+#include "./const_settings.h"
 
 #include <Arduino.h>
 
-Time_Handler::Time_Handler(){
+time_handler::time_handler(){
 }
 
-int Time_Handler::Init(){
+int time_handler::init(){
     if(!rtc.begin()){
-        Serial.println("RTC (Real Time Clock) init failed");
+        if(!Serial)
+            Serial.begin(BAUD_RATE);
+        Serial.println("RTC (Real time Clock) init failed");
         Serial.flush();
         abort();
     }
@@ -20,8 +23,8 @@ int Time_Handler::Init(){
     return 0;
 }
 
-Time Time_Handler::getTime(){
-    Time result;
+time time_handler::get_time(){
+    time result;
     DateTime now = rtc.now();
 
     result.hours = now.hour();
@@ -30,16 +33,17 @@ Time Time_Handler::getTime(){
     return result;
 }
 
-void Time_Handler::setTime(Time curr){
-    rtc.adjust(DateTime(2024, 1, 1, curr.hours, curr.minutes, curr.seconds));
+// TODO: fix this
+void time_handler::set_time(time current_time_of_day){
+    rtc.adjust(DateTime(2025, 1, 1, current_time_of_day.hours, current_time_of_day.minutes, current_time_of_day.seconds));
 }
 
-void Time_Handler::setAlarm(Time alarm){
+void time_handler::set_alarm(time time_of_alarm){
     rtc.clearAlarm(1);
-    rtc.setAlarm1(DateTime(2024, 1, 1, alarm.hours, alarm.minutes, alarm.seconds), DS3231_A1_Hour);
+    rtc.setAlarm1(DateTime(2024, 1, 1, time_of_alarm.hours, time_of_alarm.minutes, time_of_alarm.seconds), DS3231_A1_Hour);
 }
 
 // probably not needed for this project
-bool Time_Handler::lostPower(){
+bool time_handler::lost_power(){
     return rtc.lostPower();
 }

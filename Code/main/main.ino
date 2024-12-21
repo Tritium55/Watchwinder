@@ -3,45 +3,55 @@
 #include "./display_handler.h"
 #include "./time_handler.h"
 
-//all user settings are imported from this file
+// all user settings
 #include "./const_settings.h"
 
-// default library for watchdog, deepsleep and power saving management
-// #include <ArduinoLowPower.h>     //comment out if using avr boards
-#include <LowPower.h>          //use library if using avr boards
+// default library for watchdog, deepsleep, and power saving
+#ifdef __AVR__
+    #include <LowPower.h>
+#else
+    #include <ArduinoLowPower.h>
+#endif
 
-//create servo motors
-ServoMotor m1(SERVO_PIN_1);
-ServoMotor m2(SERVO_PIN_2);
-ServoMotor m3(SERVO_PIN_3);
 
-//manage EEPROM
-EEPROM_Handler EEPROM;
+// declared volatile since its' value can change inside an interrupt
+volatile unsigned long last_action = millis(); 
+volatile bool turn_motor_flag = false;
 
-//manage real time clock
-Time_Handler clock;
+// what the screen the display currently displays
+menu_selection menu_status = none;
 
-//manage display
-Display_Handler display = Display_Handler(DISPLAY_CS, DISPLAY_DC, DISPLAY_RESET);
+//create servo motors handlers
+servo_motor m1(SERVO_PIN_1);
+servo_motor m2(SERVO_PIN_2);
+servo_motor m3(SERVO_PIN_3);
+
+eeprom_handler eeprom;
+
+// RTC handler
+time_handler clock;
+
+// display handler
+display_handler display = display_handler(DISPLAY_CS, DISPLAY_DC, DISPLAY_RESET);
 
 void setup(){
     Serial.begin(9600);
     pinMode(CONFIRM_BUTTON, INPUT_PULLUP);
     pinMode(INCREASE_BUTTON, INPUT_PULLUP);
     pinMode(REALTIME_CLK_SQW, INPUT_PULLUP);
-    m1.Init();
-    m2.Init();
-    m3.Init();
-    clock.Init();
-    display.Init();
+    m1.init();
+    m2.init();
+    m3.init();
+    clock.init();
+    display.init();
     
     LowPower.attachInterruptWakeup(REALTIME_CLK_SQW, wakeup_with_turn, CHANGE);
     LowPower.attachInterruptWakeup(CONFIRM_BUTTON, wakeup, CHANGE);
 
-    clock.setAlarm(EEPROM.Read().rotation_time);
+    clock.set_alarm(eeprom.read().rotation_time);
 
     bool setClock = true;
-    setTime(setClock);
+    set_time(setClock);
 }
 
 void sleep(){
@@ -52,13 +62,17 @@ void sleep(){
     LowPower.deepSleep();
 }
 
+// this function is used when a wakeup occurs not by user input, but by the RTC
+// (its time for watch winding)
 void wakeup_with_turn(){
     turn_motor_flag = true;
     wakeup();
 }
 
+// default wakeup function
 void wakeup(){
-    // power on display (probably via digital pin and transistor/ mosfet)
+    // TODO power on display (probably via digital pin and transistor/ mosfet)
+    // TODO power on servo mosfets
     m1.enable();
     m2.enable();
     m3.enable();
@@ -66,7 +80,7 @@ void wakeup(){
 }
 
 // checks if confirm button is pushed and waits for release
-bool confirmButtonPushed(){
+bool confirm_button_pushed(){
     // negate digigalRead() because PULL_UP resistor is used instead of PULL_DOWN
     bool state = !digitalRead(CONFIRM_BUTTON);
     if(!state)
@@ -78,7 +92,7 @@ bool confirmButtonPushed(){
 }
 
 // checks if increase button is pushed and waits for release
-bool increaseButtonPushed(){
+bool increase_button_pushed(){
     // negate digigalRead() because PULL_UP resistor is used instead of PULL_DOWN
     bool state = !digitalRead(INCREASE_BUTTON);
     if(!state)
@@ -91,32 +105,34 @@ bool increaseButtonPushed(){
 
 // if the parameter is set to true, the RTC time will be set.
 // otherwise the time for when the rotations will occur will be set.
-void setTime(bool setClock){
-    TimeHighlighting highlight = hours;
-    Time time = (setClock ? clock.getTime() : EEPROM.Read().rotation_time);
+void set_time(bool set_rtc){
+    time_highlighting highlight = hours;
+    time time = (set_rtc ? clock.get_time() : eeprom.read().rotation_time);
     while(true){
-        DisplayTime dt;
+        display_time dt;
         dt.time = time;
         dt.time_highlight = highlight;
-        display.handle_time_setting(dt);
+        display.set_time_menu(dt);
 
-        if(confirmButtonPushed()){
+        // this checks if the confirm button has been pushed
+        if(confirm_button_pushed()){
             //? this comparison might not be legal
+            // TODO fix this shit
             if(highlight<seconds)
                 highlight++;
             else{
-                if(setClock)
-                    clock.setTime(time);
+                if(set_rtc)
+                    clock.set_time(time);
                 else{
-                    EEPROM_DATA data = EEPROM.Read();
+                    eeprom_data data = eeprom.read();
                     data.rotation_time = time;
-                    EEPROM.Write(data);
-                    clock.setAlarm(time);
+                    eeprom.write(data);
+                    clock.set_alarm(time);
                 }
                 return;
             }
         }
-        else if(increaseButtonPushed()){
+        else if(increase_button_pushed()){
             switch(highlight){
                 case hours:
                     time.hours++;
@@ -138,28 +154,22 @@ void setTime(bool setClock){
 }
 
 // manages all aspects of the rotation setting interaction
-void setRotations(){
-    EEPROM_DATA data = EEPROM.Read();
+void set_rotations(){
+    eeprom_data data = eeprom.read();
     uint16_t rotations = data.rotation_amount;
     while(true){
-        display.handle_rotation_setting(rotations);
-        if(confirmButtonPushed()){
+        display.set_rotations_menu(rotations);
+        if(confirm_button_pushed()){
             data.rotation_amount = rotations;
-            EEPROM.Write(data);
+            eeprom.write(data);
         }
-        else if(increaseButtonPushed()){
+        else if(increase_button_pushed()){
             rotations += AMOUNT_PER_INCREASE_BUTTON_PUSHED;
             rotations %= (MAX_NUMBER_OF_ROTATIONS+1);
         }
     }
 }
 
-
-// declared volatile since its' value can change inside an interrupt
-volatile unsigned long last_action = millis(); 
-volatile bool turn_motor_flag = false;
-
-MenuSelection menu_status = none;
 
 void loop(){
     // updates the timestamp of the last user input
@@ -170,42 +180,42 @@ void loop(){
     switch(menu_status){
         // no button selected
         case none:
-            if(increaseButtonPushed())
-                menu_status = set_time;
+            if(increase_button_pushed())
+                menu_status = time_select;
 
             break;
         
-        // set turn time menu button currently selected
-        case set_time:
-            if(increaseButtonPushed())
-                menu_status = set_rotations;
+        // set turn time menu option currently selected
+        case time_select:
+            if(increase_button_pushed())
+                menu_status = rotations_select;
 
-            if(confirmButtonPushed()){
+            if(confirm_button_pushed()){
                 menu_status = none;
-                setTime(false);
+                set_time(false);
             }
             break;
 
         // set rotations menu button currently selected
-        case set_rotations:
-            if(increaseButtonPushed())
+        case rotations_select:
+            if(increase_button_pushed())
                 menu_status = reset_to_factory_settings;
             
-            if(confirmButtonPushed()){
+            if(confirm_button_pushed()){
                 menu_status = none;
-                setRotations();
+                set_rotations();
             }
             break;
         
         // reset button currently selected
         case reset_to_factory_settings:
-            if(increaseButtonPushed())
+            if(increase_button_pushed())
                 menu_status = none;
             
-            if(confirmButtonPushed()){
+            if(confirm_button_pushed()){
                 menu_status = none;
-                EEPROM.Reset();
-                clock.setAlarm(EEPROM.Read().rotation_time);
+                eeprom.reset();
+                clock.set_alarm(eeprom.read().rotation_time);
             }
             break;
 
@@ -220,8 +230,8 @@ void loop(){
         sleep();
 
     if(turn_motor_flag){
-        uint16_t rotations = EEPROM.Read().rotation_amount;
-        ServoMotor::SpinMultiple(m1, m2, m3, rotations);
+        uint16_t rotations = eeprom.read().rotation_amount;
+        servo_motor::spin_multiple(m1, m2, m3, rotations);
         turn_motor_flag = false;
     }
 }

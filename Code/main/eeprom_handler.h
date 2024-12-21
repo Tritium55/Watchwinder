@@ -2,19 +2,20 @@
 #ifndef eeprom_handler_
 #define eeprom_handler_
 
+#include <stdint.h>
 #include "time_handler.h"
 
-typedef struct EEPROM_DATA_{
-    Time rotation_time;
-    uint16_t rotation_amount;
-}EEPROM_DATA;
+typedef struct eeprom_data_{
+    time rotation_time;         // time of day when the rotations occur
+    uint16_t rotation_amount;   // the amount of rotations made per day
+}eeprom_data;
 
-class EEPROM_Handler{
+class eeprom_handler{
     public:
-        EEPROM_Handler();
-        void Write(EEPROM_DATA &data);
-        EEPROM_DATA Read();
-        void Reset();     // reset current settings to factory settings
+        eeprom_handler();
+        void write(eeprom_data &data);
+        eeprom_data read();
+        void reset();     // reset current settings to factory settings
 };
 
 #endif //eeprom_handler_

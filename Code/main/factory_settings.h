@@ -3,9 +3,9 @@
 #define factory_settings_
 
 // factory set real time for rotation in 24 hour format
-#define TIME_FOR_ROTATION_HOUR 2
-#define TIME_FOR_ROTATION_MINUTE 0
-#define TIME_FOR_ROTATION_SECOND 0
+#define TIME_FOR_ROTATION_HOURS 2
+#define TIME_FOR_ROTATION_MINUTES 0
+#define TIME_FOR_ROTATION_SECONDS 0
 
 // factory set number of rotations
 #define NUMBER_OF_ROTATIONS 700
